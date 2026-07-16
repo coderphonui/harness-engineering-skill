@@ -62,6 +62,24 @@ the next spec while the current feature is being built is healthy pipelining, no
 Tier Check section exists precisely to demote an idea to light tier early. When in doubt: a
 feature whose design section would just restate its spec is light tier.
 
+## The stage skills
+
+Each stage has a companion skill installed alongside this one, defining that stage's **role**,
+process, quality bar, and anti-patterns. When they are present, do stage work through them:
+
+| Stage | Skill | Role |
+|---|---|---|
+| (routing) | `../../feature/SKILL.md` | lifecycle dispatcher — finds the stage, enforces handoffs |
+| Brainstorm & analyze | `../../feature-brainstorm/SKILL.md` | product analyst — options, rationale, tier call |
+| Requirement spec | `../../feature-spec/SKILL.md` | requirements engineer — falsifiable ACs, executable verification |
+| Technical design | `../../feature-design/SKILL.md` | software architect — smallest design, contracts, step plan |
+| Implementation | `../../feature-implement/SKILL.md` | disciplined implementer — WIP=1, per-step green commits |
+| QA & code review | `../../feature-review/SKILL.md` | independent checker — re-run, cite, verdict (never the maker) |
+
+(Paths are relative to this file's installed location; the skills are siblings of the harness
+skill directory.) Without them, this file plus the templates carry the same rules — the skills
+are packaging, not a dependency.
+
 ## The tool
 
 `scripts/feature.py` (Python 3, stdlib only) mechanizes the flow — see `feature.py help`.

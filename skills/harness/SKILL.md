@@ -124,7 +124,9 @@ verification runs, and blocking — but it is an accelerator, not a dependency: 
 a hand-editable file change. Small features use `light` tier and skip straight to the classic
 `not_started → in_progress → passing` flow; with the lifecycle off, the whole skill behaves as if
 this mode didn't exist. Read [references/feature-lifecycle.md](references/feature-lifecycle.md)
-before operating this mode.
+before operating this mode. When the companion stage skills are installed alongside this one
+(`feature` routes; `feature-brainstorm`, `feature-spec`, `feature-design`, `feature-implement`,
+`feature-review` each own one stage's role and best practices), route stage work through them.
 
 ## Core Concepts
 

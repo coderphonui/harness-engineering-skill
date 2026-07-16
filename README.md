@@ -33,8 +33,8 @@ applied at the root level *and* at the application level — see [Monorepos](#mo
 ## Quick Start
 
 ```bash
-# 1. Install into a target repository
-./install.sh /path/to/your-repo              # Claude Code: .claude/skills/harness
+# 1. Install into a target repository (whole family: harness + feature stage skills)
+./install.sh /path/to/your-repo              # Claude Code: .claude/skills/
 
 # 2. See where its harness currently stands
 bash /path/to/your-repo/.claude/skills/harness/scripts/harness-audit.sh /path/to/your-repo
@@ -69,6 +69,14 @@ From there, ask the agent to **scaffold** the missing pieces — it adapts the t
 ## Layout
 
 ```
+skills/
+├── feature/                        # lifecycle dispatcher: routes a feature to its stage skill
+├── feature-brainstorm/             # stage skill: product analyst — brief.md
+├── feature-spec/                   # stage skill: requirements engineer — spec.md
+├── feature-design/                 # stage skill: software architect — design.md
+├── feature-implement/              # stage skill: disciplined implementer — code + evidence
+├── feature-review/                 # stage skill: independent checker — review.md verdict
+└── harness/                        # the core skill (audit / scaffold / operate / verify / loop)
 skills/harness/
 ├── SKILL.md                        # entry point (Claude Code /harness, Codex $harness)
 ├── references/
@@ -156,6 +164,18 @@ python3 <skill-dir>/scripts/feature.py verify cart-001       # runs verification
 python3 <skill-dir>/scripts/feature.py pass cart-001         # final gate -> passing
 ```
 
+**Stage skills.** Each stage ships as its own skill with a defined role, process, quality bar,
+and anti-patterns, plus a dispatcher that routes a feature to wherever it stands:
+
+| Skill | Role | Owns |
+|---|---|---|
+| `/feature` | lifecycle dispatcher | finds the stage, routes, enforces handoffs (incl. maker ≠ checker at QA) |
+| `/feature-brainstorm` | product analyst | problem-first options, recorded rationale, tier call → `brief.md` |
+| `/feature-spec` | requirements engineer | falsifiable ACs, explicit out-of-scope, executable verification → `spec.md` |
+| `/feature-design` | software architect | smallest design, change-scope triage, contracts + e2e checks, step plan → `design.md` |
+| `/feature-implement` | disciplined implementer | WIP=1, per-step verification-green commits, recorded deviations → code + evidence |
+| `/feature-review` | independent checker | re-runs everything, cites evidence, issues the verdict — never the implementer → `review.md` |
+
 Three properties keep this honest:
 
 - **Strictly opt-in.** Lifecycle off (the default) = the classic
@@ -228,8 +248,9 @@ level *and* the application level:
 ## Updating / Uninstalling
 
 ```bash
-./install.sh /path/to/your-repo --force        # refresh an installed copy in place
-rm -rf /path/to/your-repo/.claude/skills/harness   # uninstall (or the .codex/.agents equivalent)
+./install.sh /path/to/your-repo --force            # refresh installed copies in place
+./install.sh /path/to/your-repo --only harness     # install/refresh a single skill from the family
+rm -rf /path/to/your-repo/.claude/skills/harness   # uninstall one skill (or the .codex/.agents equivalent)
 ```
 
 The skill writes nothing outside the chosen skill directory; uninstalling never touches the
