@@ -5,7 +5,7 @@
 #
 # Usage:
 #   ./install.sh <target-repo> [--claude] [--codex] [--generic] [--all] [--dir <path>]
-#                [--only <name>] [--force]
+#                [--only <name>] [--force] [--symlink]
 #
 #   --claude    install to <target>/.claude/skills/   (Claude Code — default)
 #   --codex     install to <target>/.codex/skills/    (OpenAI Codex CLI)
@@ -14,6 +14,7 @@
 #   --dir P     install to <target>/P/ (custom skill directory, repeatable)
 #   --only N    install just skill N (e.g. --only harness); repeatable
 #   --force     overwrite existing installations
+#   --symlink   symlink each skill dir instead of copying (default: copy)
 set -euo pipefail
 
 SRC_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/skills"
@@ -26,6 +27,7 @@ TARGET=""
 DESTS=""
 ONLY=""
 FORCE=0
+SYMLINK=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --claude)  DESTS="$DESTS .claude/skills" ;;
@@ -37,6 +39,7 @@ while [ $# -gt 0 ]; do
     --only)    shift; [ $# -gt 0 ] || { echo "ERROR: --only needs a skill name"; exit 2; }
                ONLY="$ONLY $1" ;;
     --force)   FORCE=1 ;;
+    --symlink) SYMLINK=1 ;;
     -h|--help) usage; exit 0 ;;
     -*)        echo "ERROR: unknown flag '$1'"; usage; exit 2 ;;
     *)         [ -z "$TARGET" ] || { echo "ERROR: multiple targets given"; exit 2; }
@@ -64,16 +67,24 @@ for dest in $DESTS; do
     [ -f "$skill_dir/SKILL.md" ] || continue
     want "$name" || continue
     full="$TARGET/$dest/$name"
-    if [ -e "$full" ] && [ "$FORCE" -ne 1 ]; then
-      echo "SKIP  $full already exists (use --force to overwrite)"
-      continue
+    if [ -e "$full" ] || [ -L "$full" ]; then
+      if [ "$FORCE" -ne 1 ]; then
+        echo "SKIP  $full already exists (use --force to overwrite)"
+        continue
+      fi
+      # Clean first on --force so removed files don't linger.
+      rm -rf "$full"
     fi
-    # Clean first on --force so removed files don't linger.
-    [ "$FORCE" -eq 1 ] && rm -rf "$full"
-    mkdir -p "$full"
-    cp -R "$skill_dir." "$full/"
-    find "$full" \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} + 2>/dev/null || true
-    echo "OK    installed $name -> $full"
+    if [ "$SYMLINK" -eq 1 ]; then
+      mkdir -p "$(dirname "$full")"
+      ln -s "${skill_dir%/}" "$full"
+      echo "OK    symlinked $name -> $full"
+    else
+      mkdir -p "$full"
+      cp -R "$skill_dir." "$full/"
+      find "$full" \( -name '*.sh' -o -name '*.py' \) -exec chmod +x {} + 2>/dev/null || true
+      echo "OK    installed $name -> $full"
+    fi
     INSTALLED="$INSTALLED $name"
   done
 done
