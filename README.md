@@ -1,4 +1,8 @@
-# harness-skill
+# harness-engineering-skill
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+**Repo:** https://github.com/coderphonui/harness-engineering-skill
 
 A portable, agent-agnostic **skill** that audits, scaffolds, and operates *harness engineering*
 best practices in any repository — the infrastructure that makes AI coding agents reliable across
@@ -35,17 +39,39 @@ applied at the root level *and* at the application level — see [Monorepos](#mo
 
 ## Quick Start
 
-```bash
-# 1. Install into a target repository (whole family: harness + feature stage skills)
-./install.sh /path/to/your-repo              # Claude Code: .claude/skills/
+The easiest path: get this repo onto your machine once, then run its installer against any
+project repo you want to harness. `<your-repo>` below is the path to the project you're setting
+up — not this repo.
 
-# 2. See where its harness currently stands
+```bash
+# 1. Get the skill
+git clone https://github.com/coderphonui/harness-engineering-skill.git ~/harness-engineering-skill
+
+# 2. Install the whole family (harness + feature stage skills) into your project
+~/harness-engineering-skill/install.sh /path/to/your-repo        # Claude Code: .claude/skills/
+#   --codex     for OpenAI Codex CLI (.codex/skills/)
+#   --generic   for the cross-agent Agent Skills convention (.agents/skills/)
+#   --all       installs all three destinations at once
+
+# 3. See where its harness currently stands
 bash /path/to/your-repo/.claude/skills/harness/scripts/harness-audit.sh /path/to/your-repo
 
-# 3. Ask your agent to act on the findings
+# 4. Ask your agent to act on the findings
 #      Claude Code:  /harness            Codex:  $harness
 #      "audit our harness" / "set up the harness" / "is this actually done?"
 ```
+
+Prefer not to keep a permanent clone around? One line does clone → install → cleanup:
+
+```bash
+git clone --depth 1 https://github.com/coderphonui/harness-engineering-skill.git /tmp/harness-engineering-skill \
+  && /tmp/harness-engineering-skill/install.sh /path/to/your-repo \
+  && rm -rf /tmp/harness-engineering-skill
+```
+
+To update later, either re-run step 1 with `git -C ~/harness-engineering-skill pull` then repeat
+step 2 with `--force`, or just re-run the one-liner above — see
+[Updating / Uninstalling](#updating--uninstalling).
 
 The audit script is read-only and reports a score per subsystem, e.g.:
 
@@ -242,6 +268,7 @@ level *and* the application level:
 
 ## Requirements
 
+- `git` to clone this repo; nothing else to get it onto your machine.
 - `install.sh` and `scripts/harness-audit.sh`: POSIX-ish `bash` 3.2+ and coreutils only — no other
   dependencies, no network access, both are read-only or write only within the target repo's chosen
   skill directory.
@@ -251,9 +278,13 @@ level *and* the application level:
 ## Updating / Uninstalling
 
 ```bash
-./install.sh /path/to/your-repo --force            # refresh installed copies in place
-./install.sh /path/to/your-repo --only harness     # install/refresh a single skill from the family
-rm -rf /path/to/your-repo/.claude/skills/harness   # uninstall one skill (or the .codex/.agents equivalent)
+# Pull the latest skill source, then refresh what's installed in your project
+git -C ~/harness-engineering-skill pull
+~/harness-engineering-skill/install.sh /path/to/your-repo --force        # refresh installed copies in place
+~/harness-engineering-skill/install.sh /path/to/your-repo --only harness # install/refresh a single skill from the family
+
+# Uninstall one skill (or the .codex/.agents equivalent)
+rm -rf /path/to/your-repo/.claude/skills/harness
 ```
 
 The skill writes nothing outside the chosen skill directory; uninstalling never touches the
