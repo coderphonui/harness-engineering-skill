@@ -7,11 +7,12 @@ long and multi-session work.
 A "harness" is everything outside the model weights: instructions, tools, environment, state, and
 feedback. The same model, in a bare repo vs. a harnessed one, produces qualitatively different
 results — the model doesn't get better, the conditions it operates in do. This skill packages that
-methodology (OpenAI Codex practices, Anthropic's long-running-agent research, Addy Osmani's Loop
-Engineering, the learn-harness-engineering course) into concrete files any coding agent can read
-and act on: entry instruction files, machine-readable feature lists, progress logs,
-init/verification scripts, session start/exit protocols, maker-checker verification, and
-autonomous loops.
+methodology — most directly the
+[Learn Harness Engineering](https://walkinglabs.github.io/learn-harness-engineering/en/) course,
+alongside OpenAI Codex practices, Anthropic's long-running-agent research, and Addy Osmani's Loop
+Engineering — into concrete files any coding agent can read and act on: entry instruction files,
+machine-readable feature lists, progress logs, init/verification scripts, session start/exit
+protocols, maker-checker verification, and autonomous loops.
 
 Single-package repositories and monorepos are both covered. In a monorepo every subsystem is
 applied at the root level *and* at the application level — see [Monorepos](#monorepos).
@@ -29,6 +30,7 @@ applied at the root level *and* at the application level — see [Monorepos](#mo
 - [Updating / Uninstalling](#updating--uninstalling)
 - [Extending the Skill](#extending-the-skill)
 - [FAQ](#faq)
+- [Credits](#credits)
 
 ## Quick Start
 
@@ -294,3 +296,15 @@ apps under `apps/`/`services/`. See `references/monorepo.md` for the full detect
 **What if the audit score looks low but the repo works fine day to day?**
 The lowest subsystem score is a *candidate* bottleneck, not a verdict — confirm it against actual
 agent failure history before investing effort. See "How to run an audit" in `references/audit.md`.
+
+## Credits
+
+The methodology this skill operationalizes is drawn primarily from the
+**[Learn Harness Engineering](https://walkinglabs.github.io/learn-harness-engineering/en/) course**
+— the five subsystems, the failure taxonomy, WIP=1, feature lists as harness primitives, clean
+state, and the maker/checker split are its core teachings. This project packages that curriculum
+into repository-native artifacts and a companion feature-lifecycle skill family, but the
+methodology and the credit for it are the course's.
+
+Additional influences: OpenAI's Codex harness-engineering practices, Anthropic's research on
+harnesses for long-running agents, and Addy Osmani's writing on Loop Engineering.
