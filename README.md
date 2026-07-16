@@ -31,6 +31,7 @@ applied at the root level *and* at the application level — see [Monorepos](#mo
 - [Extending the Skill](#extending-the-skill)
 - [FAQ](#faq)
 - [Credits](#credits)
+- [License](#license)
 
 ## Quick Start
 
@@ -308,3 +309,7 @@ methodology and the credit for it are the course's.
 
 Additional influences: OpenAI's Codex harness-engineering practices, Anthropic's research on
 harnesses for long-running agents, and Addy Osmani's writing on Loop Engineering.
+
+## License
+
+[MIT](LICENSE)
