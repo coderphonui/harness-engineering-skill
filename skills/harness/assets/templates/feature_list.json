@@ -1,0 +1,35 @@
+{
+  "project": "{{project-name}}",
+  "last_updated": "{{YYYY-MM-DD}}",
+  "rules": {
+    "single_active_feature": true,
+    "passing_requires_evidence": true,
+    "do_not_skip_verification": true,
+    "monorepo_root_gate": "when affects lists more than one app, only the root verification command can move a feature to passing",
+    "state_machine": "not_started -> in_progress -> (blocked |) passing"
+  },
+  "status_legend": {
+    "not_started": "Work has not begun.",
+    "in_progress": "The single current active feature. Only one at a time.",
+    "blocked": "Cannot continue until the documented blocker is resolved.",
+    "passing": "Required verification ran, passed, and evidence is recorded. Irreversible."
+  },
+  "features": [
+    {
+      "id": "{{area}}-001",
+      "priority": 1,
+      "area": "{{feature area, e.g. auth, cart}}",
+      "title": "{{short title}}",
+      "user_visible_behavior": "{{what a user sees when this works, one sentence}}",
+      "status": "not_started",
+      "affects": ["{{apps/packages this feature touches, e.g. web, api — from change-scope triage; use a single value or omit in a single-package repo}}"],
+      "verification": [
+        "{{step or command 1, e.g. curl -X POST /api/x | jq .status == 201}}",
+        "{{step or command 2}}"
+      ],
+      "evidence": [],
+      "depends_on": [],
+      "notes": ""
+    }
+  ]
+}
