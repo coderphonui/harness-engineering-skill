@@ -18,6 +18,7 @@ Commands:
   start <id>                    advance until in_progress (each gate still enforced)
   verify <id>                   run the entry's verification commands; record the result
   pass <id>                     final gate -> passing (alias for the last advance)
+  regress <id> [<stage>]        move backward one stage (or to a named earlier stage); ungated
   block <id> "<reason>"         mark blocked (remembers the prior stage)
   unblock <id>                  restore the pre-block stage
 
@@ -257,12 +258,12 @@ def cmd_init(args):
             "do_not_skip_verification": True,
             "monorepo_root_gate": "when affects lists more than one app, only the root "
                                   "verification command can move a feature to passing",
-            "state_machine_light": " -> ".join(LIGHT_FLOW) + " (+ blocked)",
-            "state_machine_full": " -> ".join(FULL_FLOW) + " (+ blocked)",
+            "state_machine": " -> ".join(LIGHT_FLOW) + " (+ blocked)",
             "lifecycle": {
                 "enabled": lifecycle,
                 "default_tier": "full",
                 "stages": DEFAULT_STAGES,
+                "state_machine_full": " -> ".join(FULL_FLOW) + " (+ blocked)",
             },
         },
         "features": [],
@@ -438,6 +439,40 @@ def cmd_pass(args):
         save(data)
 
 
+def cmd_regress(args):
+    """Move BACKWARD one stage (or to a named earlier stage). Backward moves are ungated —
+    gates only guard forward progress. Used when QA blocks or a stage's premise fails."""
+    data = load()
+    if not args:
+        die("usage: feature.py regress <id> [<earlier-stage>]")
+    f = find(data, args[0])
+    flow = flow_of(data, f)
+    status = f["status"]
+    if status == "blocked":
+        die(f"{f['id']} is blocked — unblock first, then regress")
+    if status not in flow:
+        die(f"status '{status}' is not in the {tier_of(data, f)}-tier flow {flow}")
+    idx = flow.index(status)
+    if idx == 0:
+        die(f"{f['id']} is already at the first stage ({status})")
+    if len(args) > 1:
+        target = args[1]
+        if target not in flow or flow.index(target) >= idx:
+            die(f"target must be an earlier stage in {flow[:idx]}")
+    else:
+        target = flow[idx - 1]
+    f["status"] = target
+    f["notes"] = (f.get("notes", "") + f"\n[{today()}] REGRESSED {status} -> {target}").strip()
+    # Rework invalidates prior verification evidence — it must be re-earned after the changes.
+    if f.pop("last_verification", None) is not None:
+        f.setdefault("evidence", []).append(
+            f"{today()} last_verification cleared by regress to {target} — re-run verify")
+    data["last_updated"] = today()
+    save(data)
+    print(f"{f['id']}: {status} -> {target} (regressed; forward gates apply again from here, "
+          f"and verification must be re-run)")
+
+
 def cmd_block(args):
     data = load()
     if len(args) < 2:
@@ -470,7 +505,8 @@ def cmd_unblock(args):
 COMMANDS = {
     "init": cmd_init, "list": cmd_list, "show": cmd_show, "new": cmd_new,
     "scaffold": cmd_scaffold, "advance": cmd_advance, "start": cmd_start,
-    "verify": cmd_verify, "pass": cmd_pass, "block": cmd_block, "unblock": cmd_unblock,
+    "verify": cmd_verify, "pass": cmd_pass, "regress": cmd_regress,
+    "block": cmd_block, "unblock": cmd_unblock,
 }
 
 

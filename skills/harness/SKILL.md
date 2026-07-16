@@ -11,8 +11,9 @@ description: >-
   AGENTS.md, CLAUDE.md, feature_list.json, PROGRESS.md, init.sh, or session-handoff files,
   (4) the user asks for a harness audit, harness setup, session handoff, definition of done,
   or an automated/scheduled agent loop, (5) setting up per-app instructions and verification in a
-  monorepo. Agent-agnostic: works with Claude Code, Codex, Cursor, or any coding agent that can
-  read repository files.
+  monorepo, (6) enabling or operating the optional feature development lifecycle (brainstorm →
+  spec → design → implementation → QA/review) and its feature.py tool. Agent-agnostic: works with
+  Claude Code, Codex, Cursor, or any coding agent that can read repository files.
 ---
 
 # Harness Engineering
@@ -119,8 +120,9 @@ When the project opts in (`rules.lifecycle.enabled` in `feature_list.json`), fea
 staged, gated phases: **brainstorm & analyze → requirement spec → technical design →
 implementation → QA & code review**, each with a named artifact (`docs/features/<id>/brief.md`,
 `spec.md`, `design.md`, `review.md`) and a machine-checked exit gate. The bundled tool
-`scripts/feature.py` (Python 3, stdlib only) mechanizes creation, gated stage transitions,
-verification runs, and blocking — but it is an accelerator, not a dependency: every operation is
+`scripts/feature.py` (Python 3, stdlib only) mechanizes creation, gated forward transitions,
+verification runs, ungated regression for rework, and blocking — but it is an accelerator, not a
+dependency: every operation is
 a hand-editable file change. Small features use `light` tier and skip straight to the classic
 `not_started → in_progress → passing` flow; with the lifecycle off, the whole skill behaves as if
 this mode didn't exist. Read [references/feature-lifecycle.md](references/feature-lifecycle.md)

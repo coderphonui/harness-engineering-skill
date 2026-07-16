@@ -48,7 +48,9 @@ Compose loops from these; not all are needed every time:
    different prompt (sometimes a different model) and must cite evidence for its verdict.
 6. **External state** — the loop's memory: a markdown/JSON file (or issue board) on disk recording
    what's done / in progress / next. Models forget between runs; the repository doesn't. This is
-   the spine of every loop — `PROGRESS.md` and `feature_list.json` are the natural substrate.
+   the spine of every loop — `PROGRESS.md` and `feature_list.json` are the natural substrate,
+   and `scripts/feature.py` gives loops gated, exit-code-checkable state transitions over that
+   substrate (a loop that can't fake `passing` is a loop you can trust unattended).
 
 ## Reference Anatomy: a self-feeding loop
 

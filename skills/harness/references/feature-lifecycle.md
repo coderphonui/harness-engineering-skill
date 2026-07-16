@@ -103,6 +103,13 @@ python3 <skill-dir>/scripts/feature.py pass cart-001                        # ->
 Gate failures print WHAT/WHY/FIX and exit nonzero, so the tool works as a script gate in loops
 and CI as well as interactively.
 
+**Gates guard forward moves only.** Going backward is always allowed and ungated —
+`feature.py regress <id> [<stage>]` — because discovering that a stage's premise was wrong (QA
+blocks, the design can't satisfy the spec, the spec contradicts the brief) must never be harder
+than pushing forward. `block`/`unblock` is for external blockers (waiting on an answer, an API
+key); `regress` is for rework. Regressions are stamped into the entry's `notes` so the history
+of direction changes stays visible.
+
 **The tool is an accelerator, not a dependency.** Every operation is a documented edit to
 `feature_list.json` or a markdown file: an agent without Python (or a human in an editor) advances
 a feature by completing the stage artifact and updating `status` by hand, honoring the same gates.

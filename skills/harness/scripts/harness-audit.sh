@@ -215,7 +215,8 @@ if [ "$LIFECYCLE" -eq 0 ]; then
     DOC_DIRS=$((DOC_DIRS + 1))
     [ -f "${d}brief.md" ] && [ -f "${d}spec.md" ] && DOC_OK=$((DOC_OK + 1))
   done
-  [ "$DOC_DIRS" -gt 0 ] && [ "$DOC_OK" -eq "$DOC_DIRS" ]
+  # No doc dirs yet (lifecycle just enabled / light-tier-only) is fine; incomplete dirs are not.
+  [ "$DOC_OK" -eq "$DOC_DIRS" ]
   check "Feature doc dirs have stage artifacts (${DOC_OK}/${DOC_DIRS} with brief+spec)" $?
   grep -q '"last_verification"' feature_list.json 2>/dev/null || \
     grep -q 'verify PASS' feature_list.json 2>/dev/null

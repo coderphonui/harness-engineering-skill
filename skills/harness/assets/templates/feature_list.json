@@ -15,10 +15,14 @@
     }
   },
   "status_legend": {
-    "not_started": "Work has not begun.",
+    "not_started": "Work has not begun. (light tier / lifecycle off)",
     "in_progress": "The single current active feature. Only one at a time.",
     "blocked": "Cannot continue until the documented blocker is resolved.",
-    "passing": "Required verification ran, passed, and evidence is recorded. Irreversible."
+    "passing": "Required verification ran, passed, and evidence is recorded. Irreversible.",
+    "proposed": "(lifecycle full tier) brainstorm & analyze in progress; exit gate: brief.md complete.",
+    "in_spec": "(lifecycle full tier) requirement spec; exit gate: spec.md complete + verification recorded.",
+    "in_design": "(lifecycle full tier) technical design; exit gate: design.md complete (+ affects in monorepo).",
+    "in_qa": "(lifecycle full tier) independent QA & code review; exit gate: review.md Verdict: Accept."
   },
   "features": [
     {

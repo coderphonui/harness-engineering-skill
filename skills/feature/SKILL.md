@@ -42,7 +42,9 @@ skill assumes the harness skill is installed alongside.
 
 4. **Advance only through the tool** (`feature.py advance <id>`) or by honoring the identical
    gates manually — never by editing `status` to skip a gate. A gate failure prints WHAT/WHY/FIX;
-   fix the named artifact, don't argue with the gate.
+   fix the named artifact, don't argue with the gate. Backward is different: rework goes to an
+   earlier stage via `feature.py regress <id> [<stage>]` (ungated by design), and external
+   blockers via `block`/`unblock`.
 
 ## Hard rules you enforce as dispatcher
 

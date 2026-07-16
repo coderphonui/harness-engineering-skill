@@ -28,6 +28,9 @@ session to an executable state in under ~3 minutes.
 ## During the Session
 
 - WIP=1: no side-quests, no "refactor while we're at it" until the active feature passes.
+  (Lifecycle-enabled repos: WIP=1 binds the `in_progress` implementation slot; brief/spec/design
+  work for a *next* feature may pipeline alongside — see
+  [feature-lifecycle.md](feature-lifecycle.md).)
 - Commit after each atomic unit of work; the message explains what and why.
 - Record design decisions (what, why, rejected alternatives) in the progress log as they happen —
   the "why" is what gets lost between sessions.

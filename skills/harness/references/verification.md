@@ -42,7 +42,9 @@ The entity that wrote the code never issues the completion verdict. A model is i
 best defense attorney — it doesn't see mistakes, it sees its reasoning. Options, lightest first:
 
 1. **Script gate**: the feature's verification command decides the state transition. The agent
-   submits a verification request; the command's exit status is the verdict.
+   submits a verification request; the command's exit status is the verdict. (Mechanized by the
+   bundled `scripts/feature.py`: `verify` runs the entry's commands and records the result;
+   `advance`/`pass` refuse transitions whose gate evidence is missing.)
 2. **Independent session**: a fresh context (no memory of writing the code) re-runs verification
    and reviews the diff against the feature's behavior description.
 3. **Evaluator agent**: a separate agent — different prompt, tuned to be skeptical, ideally able to

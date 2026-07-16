@@ -59,8 +59,10 @@ is invalid by the rubric's own rules
    - **Revise** — fixable gaps; list them precisely (the implementer should be able to act
      without asking you anything). Feature stays `in_qa`; re-review after fixes.
    - **Block** — the approach itself fails (spec unmet, contract broken, architecture violated);
-     do not build further on it. `feature.py block <id> "<reason>"`, route back to the failed
-     stage.
+     do not build further on it. Route the feature back to the stage whose output failed:
+     `feature.py regress <id> <stage>` (backward moves are ungated; forward gates apply again
+     from there), with the reason in your findings. Use `feature.py block <id> "<reason>"`
+     instead when progress waits on something external rather than rework.
 
 ## Judgment calls
 
