@@ -193,6 +193,39 @@ if [ "$MONOREPO" -eq 0 ]; then
   end_section "Monorepo"
 fi
 
+# ---------- 7. Lifecycle (only when the project has opted in) ----------
+LIFECYCLE=1
+if [ -f feature_list.json ] && grep -q '"lifecycle"' feature_list.json && \
+   grep -A2 '"lifecycle"' feature_list.json | grep -q '"enabled": *true'; then
+  LIFECYCLE=0
+fi
+[ "$LIFECYCLE" -ne 0 ] && [ -d docs/features ] && ls docs/features/*/brief.md >/dev/null 2>&1 && LIFECYCLE=0
+
+if [ "$LIFECYCLE" -eq 0 ]; then
+  begin_section "Lifecycle"
+
+  grep -q '"lifecycle"' feature_list.json 2>/dev/null && \
+    grep -A2 '"lifecycle"' feature_list.json | grep -q '"enabled": *true'
+  check "Lifecycle enabled in feature_list.json rules" $?
+  [ -d docs/features ]; check "docs/features/ stage-doc directory exists" $?
+  # Every feature doc dir should carry at least brief.md and spec.md.
+  DOC_DIRS=0; DOC_OK=0
+  for d in docs/features/*/; do
+    [ -d "$d" ] || continue
+    DOC_DIRS=$((DOC_DIRS + 1))
+    [ -f "${d}brief.md" ] && [ -f "${d}spec.md" ] && DOC_OK=$((DOC_OK + 1))
+  done
+  [ "$DOC_DIRS" -gt 0 ] && [ "$DOC_OK" -eq "$DOC_DIRS" ]
+  check "Feature doc dirs have stage artifacts (${DOC_OK}/${DOC_DIRS} with brief+spec)" $?
+  grep -q '"last_verification"' feature_list.json 2>/dev/null || \
+    grep -q 'verify PASS' feature_list.json 2>/dev/null
+  check "Verification runs recorded on entries (evidence of gated transitions)" $?
+  grep -qri "^Verdict:" docs/features/*/review.md 2>/dev/null
+  check "QA reviews carry explicit verdicts (maker != checker gate in use)" $?
+
+  end_section "Lifecycle"
+fi
+
 # ---------- Report ----------
 echo "# Harness Audit: $(basename "$(pwd)")"
 echo

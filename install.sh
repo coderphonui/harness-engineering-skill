@@ -55,7 +55,7 @@ for dest in $DESTS; do
   # Copy contents; clean first on --force so removed files don't linger.
   [ "$FORCE" -eq 1 ] && rm -rf "$full" && mkdir -p "$full"
   cp -R "$SKILL_SRC/." "$full/"
-  chmod +x "$full/scripts/harness-audit.sh" 2>/dev/null || true
+  chmod +x "$full/scripts/harness-audit.sh" "$full/scripts/feature.py" 2>/dev/null || true
   echo "OK    installed to $full"
   INSTALLED="$INSTALLED $full"
 done

@@ -113,6 +113,19 @@ When the user wants recurring, scheduled, or goal-driven autonomous work, read
 verification + stopping condition; separate maker from checker; persist state to disk between
 runs; watch the four silent costs.
 
+### 6. Lifecycle (opt-in) — "Take a feature from idea to shipped"
+
+When the project opts in (`rules.lifecycle.enabled` in `feature_list.json`), features flow through
+staged, gated phases: **brainstorm & analyze → requirement spec → technical design →
+implementation → QA & code review**, each with a named artifact (`docs/features/<id>/brief.md`,
+`spec.md`, `design.md`, `review.md`) and a machine-checked exit gate. The bundled tool
+`scripts/feature.py` (Python 3, stdlib only) mechanizes creation, gated stage transitions,
+verification runs, and blocking — but it is an accelerator, not a dependency: every operation is
+a hand-editable file change. Small features use `light` tier and skip straight to the classic
+`not_started → in_progress → passing` flow; with the lifecycle off, the whole skill behaves as if
+this mode didn't exist. Read [references/feature-lifecycle.md](references/feature-lifecycle.md)
+before operating this mode.
+
 ## Core Concepts
 
 For the distilled methodology behind all modes — failure taxonomy, repo-as-system-of-record,
@@ -161,6 +174,7 @@ When the user describes a symptom, jump straight to the fix:
 | Human is the bottleneck pressing "go" | Loop engineering | see loop reference |
 | Change in one app silently breaks another | Change-scope triage + contract checks | see monorepo reference |
 | Root entry file balloons with per-app detail | Two-level instruction architecture | nested entry files |
+| Coding starts before requirements are agreed, causing rework | Staged lifecycle with gates | see feature-lifecycle reference |
 
 ## Project-Specific Bindings
 

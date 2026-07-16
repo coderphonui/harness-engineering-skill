@@ -22,6 +22,7 @@ applied at the root level *and* at the application level — see [Monorepos](#mo
 - [Layout](#layout)
 - [Usage](#usage)
 - [The Five Subsystems](#the-five-subsystems)
+- [Feature Development Lifecycle (opt-in)](#feature-development-lifecycle-opt-in)
 - [Monorepos](#monorepos)
 - [Design Principles](#design-principles)
 - [Requirements](#requirements)
@@ -74,11 +75,13 @@ skills/harness/
 │   ├── principles.md               # distilled methodology — read to design or explain a decision
 │   ├── audit.md                    # manual audit checklist + scoring rubric behind the script
 │   ├── monorepo.md                 # two-level harness rules for monorepos
+│   ├── feature-lifecycle.md        # opt-in staged lifecycle (brainstorm → spec → design → impl → QA)
 │   ├── verification.md             # definition of done, maker ≠ checker, WHAT/WHY/FIX errors
 │   ├── session-protocol.md         # session start/end routine, new-project initialization playbook
 │   └── loop-engineering.md         # autonomous / scheduled / goal-driven agent loops
 ├── scripts/
-│   └── harness-audit.sh            # mechanical, read-only audit (auto-detects monorepos)
+│   ├── harness-audit.sh            # mechanical, read-only audit (auto-detects monorepos + lifecycle)
+│   └── feature.py                  # feature-list manager + gated lifecycle transitions (py3 stdlib)
 └── assets/templates/
     ├── AGENTS.md                   # entry instruction file (router) for a single-package repo
     ├── AGENTS.app.md               # nested per-app entry file for a monorepo
@@ -89,7 +92,8 @@ skills/harness/
     ├── evaluator-rubric.md         # independent completion scoring (maker ≠ checker)
     ├── quality-document.md         # codebase health grade over time, per domain/layer
     ├── sprint-contract.md          # scope agreed before implementation begins
-    └── clean-state-checklist.md    # session-exit gate
+    ├── clean-state-checklist.md    # session-exit gate
+    └── lifecycle/                  # stage docs: brief.md, spec.md, design.md, review.md
 install.sh                          # copies the skill into a target repo, for one or more agents
 README.md                           # this file
 ```
@@ -109,6 +113,7 @@ reference file before acting:
 | Operate | session start / session end | Fixed clock-in (cwd → progress → features → recent commits → baseline verify) / clock-out (update state → clean temp artifacts → verify → commit) protocol | `references/session-protocol.md` |
 | Verify | "Is this actually done?" | Evidence-gated completion: static → runtime → end-to-end, the maker never grades its own work | `references/verification.md` |
 | Loop | "Make it run without me" | Goal + verification + stopping condition, maker/checker split, scheduled or event-driven runs | `references/loop-engineering.md` |
+| Lifecycle (opt-in) | "Take this feature from idea to shipped" | Staged, gated flow: brainstorm → spec → design → implementation → QA & review, driven by `scripts/feature.py` | `references/feature-lifecycle.md` |
 
 ## The Five Subsystems
 
@@ -125,6 +130,45 @@ Every reliable harness has all five; a missing one is the first thing to fix.
 Feedback is the highest-ROI subsystem when everything is weak — get verification commands
 explicit and runnable before anything else. Full rationale, failure taxonomy, and metrics are in
 `references/principles.md`.
+
+## Feature Development Lifecycle (opt-in)
+
+For features big enough that "start coding from a one-line title" causes rework, the skill offers
+a staged lifecycle — **brainstorm & analyze → requirement spec → technical design →
+implementation → QA & code review** — where every stage has a named artifact and a
+machine-checked exit gate:
+
+| Stage | Status | Artifact | Exit gate |
+|---|---|---|---|
+| Brainstorm & analyze | `proposed` | `docs/features/<id>/brief.md` | doc complete (no placeholders) |
+| Requirement spec | `in_spec` | `spec.md` | doc complete + executable verification recorded on the entry |
+| Technical design | `in_design` | `design.md` | doc complete; monorepo: `affects` filled (change-scope triage) |
+| Implementation | `in_progress` | code + evidence | `feature.py verify` ran the commands and they PASS (WIP=1 enforced on entry) |
+| QA & code review | `in_qa` | `review.md` | an **independent** checker's `Verdict: Accept` (maker ≠ checker) |
+
+Driven by `scripts/feature.py` (Python 3, stdlib only):
+
+```bash
+python3 <skill-dir>/scripts/feature.py init --lifecycle      # or enable rules.lifecycle in feature_list.json
+python3 <skill-dir>/scripts/feature.py new "Add item to cart" --area cart
+python3 <skill-dir>/scripts/feature.py advance cart-001      # gated stage transitions (WHAT/WHY/FIX on failure)
+python3 <skill-dir>/scripts/feature.py verify cart-001       # runs verification, records evidence
+python3 <skill-dir>/scripts/feature.py pass cart-001         # final gate -> passing
+```
+
+Three properties keep this honest:
+
+- **Strictly opt-in.** Lifecycle off (the default) = the classic
+  `not_started → in_progress → passing` flow everywhere; nothing in the core harness depends on
+  this layer, and the audit only scores it for projects that adopted it.
+- **Tiered.** Per-feature `full` vs `light` tier — small features skip the stage docs entirely.
+  Ceremony scales with feature size, not policy.
+- **Tool-optional.** `feature.py` only edits `feature_list.json` and markdown files; any agent or
+  human can perform the same transitions by hand, honoring the same gates. The files are the
+  interface. The stage list is stored as data (`rules.lifecycle.stages`) so custom lifecycles can
+  be added later without a format change.
+
+Full rules: `references/feature-lifecycle.md`.
 
 ## Monorepos
 

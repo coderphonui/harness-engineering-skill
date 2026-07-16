@@ -79,6 +79,22 @@ Full guidance: [monorepo.md](monorepo.md).
 - [ ] Fresh-session test passes **per app** (score each; harness quality = the minimum, not the
       average)
 
+## 7. Feature Lifecycle (score only when the project has opted in)
+
+Apply only when `rules.lifecycle.enabled` is true in `feature_list.json` or `docs/features/`
+stage docs exist. Never penalize a project for not adopting the lifecycle — it is an opt-in
+layer. Full guidance: [feature-lifecycle.md](feature-lifecycle.md).
+
+- [ ] Lifecycle rules present in `feature_list.json` (enabled, default_tier, stages)
+- [ ] `docs/features/<id>/` exists per full-tier feature with the stage artifacts
+      (`brief.md`, `spec.md`, `design.md`, `review.md`)
+- [ ] Completed-stage docs have no `{{placeholders}}` left (spot-check 2–3)
+- [ ] Specs end in executable verification commands, copied into the entry's `verification`
+- [ ] Verification runs are recorded (`last_verification` / "verify PASS" evidence entries)
+- [ ] `review.md` files carry explicit verdicts, filled by an independent checker
+- [ ] Tiering is actually used — small features are `light`, not full-ceremony
+- [ ] No stage docs written after the fact just to satisfy gates (compare doc vs. commit dates)
+
 ## Scoring
 
 Per subsystem: 0 = absent · 1–2 = partial, agent still guesses · 3–4 = present and usable ·

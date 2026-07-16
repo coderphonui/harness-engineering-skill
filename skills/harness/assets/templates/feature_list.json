@@ -6,7 +6,13 @@
     "passing_requires_evidence": true,
     "do_not_skip_verification": true,
     "monorepo_root_gate": "when affects lists more than one app, only the root verification command can move a feature to passing",
-    "state_machine": "not_started -> in_progress -> (blocked |) passing"
+    "state_machine": "not_started -> in_progress -> (blocked |) passing",
+    "lifecycle": {
+      "enabled": false,
+      "default_tier": "full",
+      "stages": ["brainstorm", "spec", "design", "implement", "qa"],
+      "state_machine_full": "proposed -> in_spec -> in_design -> in_progress -> in_qa -> (blocked |) passing"
+    }
   },
   "status_legend": {
     "not_started": "Work has not begun.",
